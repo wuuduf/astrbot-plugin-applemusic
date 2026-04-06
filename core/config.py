@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import shutil
 from pathlib import Path
 from typing import Any
@@ -30,6 +31,8 @@ class PluginConfig:
         self.clean_cache_on_reload = self._get_bool("clean_cache_on_reload", False)
         self.proxy = self._get_str("proxy", "")
         self.default_storefront = self._get_str("default_storefront", "us").lower().strip() or "us"
+        self.path_map_raw = self._get_str("path_map", "").strip()
+        self.path_mappings = self._parse_path_mappings(self.path_map_raw)
 
         self.data_dir = Path(get_astrbot_plugin_data_path()) / self.plugin_name
         self.data_dir.mkdir(parents=True, exist_ok=True)
@@ -105,3 +108,43 @@ class PluginConfig:
         if text.startswith(("http://", "https://")):
             return text.rstrip("/")
         return "http://127.0.0.1:27198"
+
+    @staticmethod
+    def _parse_path_mappings(raw: str) -> list[tuple[str, str]]:
+        text = (raw or "").strip()
+        if not text:
+            return []
+        out: list[tuple[str, str]] = []
+        for chunk in re.split(r"[;\n]+", text):
+            part = chunk.strip()
+            if not part or "=>" not in part:
+                continue
+            src, dst = part.split("=>", 1)
+            src = src.strip().strip('"').strip("'")
+            dst = dst.strip().strip('"').strip("'")
+            if src and dst:
+                out.append((src, dst))
+        return out
+
+    def remap_path(self, path: str) -> str:
+        raw = (path or "").strip()
+        if not raw or not self.path_mappings:
+            return raw
+
+        def _join(dst: str, suffix: str) -> str:
+            if not suffix:
+                return dst
+            if dst.endswith(("/", "\\")) and suffix.startswith(("/", "\\")):
+                return dst.rstrip("/\\") + suffix
+            if (not dst.endswith(("/", "\\"))) and (not suffix.startswith(("/", "\\"))):
+                return dst + "/" + suffix
+            return dst + suffix
+
+        for src, dst in sorted(self.path_mappings, key=lambda x: len(x[0]), reverse=True):
+            if raw == src:
+                return dst
+            src_norm = src.rstrip("/\\")
+            if src_norm and (raw.startswith(src_norm + "/") or raw.startswith(src_norm + "\\")):
+                suffix = raw[len(src_norm):]
+                return _join(dst, suffix)
+        return raw

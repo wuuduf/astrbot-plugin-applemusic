@@ -77,6 +77,9 @@ pip install -r requirements.txt
 - `service_token`：若服务端设置了 `ASTRBOT_API_TOKEN`，这里填同一 token
 - `selection_timeout`：选歌超时秒数
 - `default_transfer_mode`：专辑/歌单默认发送方式（逐个/zip）
+- `path_map`：路径映射（解决服务端路径与容器内路径不一致）
+  示例：`/srv/amdl/downloads=>/mnt/amdl/downloads`
+  多条可用 `;` 或换行分隔
 
 其余配置见 [`_conf_schema.json`](./_conf_schema.json)。
 

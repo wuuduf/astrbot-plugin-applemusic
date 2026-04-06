@@ -93,26 +93,51 @@ class AppleMusicClient:
         client = await self._ensure_client()
         try:
             resp = await client.get(path)
+        except httpx.ConnectError as exc:
+            raise ServiceError(
+                f"无法连接服务端: {self.cfg.service_base_url}。请检查服务是否启动、地址端口、容器网络与 token 配置。"
+            ) from exc
+        except httpx.ConnectTimeout as exc:
+            raise ServiceError(
+                f"连接服务端超时: {self.cfg.service_base_url}。请检查网络连通性或服务监听地址。"
+            ) from exc
+        except httpx.TimeoutException as exc:
+            raise ServiceError("服务端响应超时，请稍后重试。") from exc
         except Exception as exc:
             raise ServiceError(f"请求服务失败: {exc}") from exc
-        return self._unwrap_response(resp)
+        return self._unwrap_response(resp, path)
 
     async def _post(self, path: str, payload: dict[str, Any]) -> dict[str, Any]:
         client = await self._ensure_client()
         try:
             resp = await client.post(path, json=payload)
+        except httpx.ConnectError as exc:
+            raise ServiceError(
+                f"无法连接服务端: {self.cfg.service_base_url}。请检查服务是否启动、地址端口、容器网络与 token 配置。"
+            ) from exc
+        except httpx.ConnectTimeout as exc:
+            raise ServiceError(
+                f"连接服务端超时: {self.cfg.service_base_url}。请检查网络连通性或服务监听地址。"
+            ) from exc
+        except httpx.TimeoutException as exc:
+            raise ServiceError("服务端响应超时，请稍后重试。") from exc
         except Exception as exc:
             raise ServiceError(f"请求服务失败: {exc}") from exc
-        return self._unwrap_response(resp)
+        return self._unwrap_response(resp, path)
 
-    @staticmethod
-    def _unwrap_response(resp: httpx.Response) -> dict[str, Any]:
+    def _unwrap_response(self, resp: httpx.Response, path: str) -> dict[str, Any]:
         try:
             data = resp.json()
         except Exception as exc:
             raise ServiceError(f"服务返回非 JSON 响应: {exc}") from exc
         if resp.status_code >= 400:
             msg = data.get("error") if isinstance(data, dict) else None
+            if resp.status_code == 401:
+                raise ServiceError(
+                    "服务端鉴权失败(401)。请检查插件 service_token 是否与服务端 ASTRBOT_API_TOKEN 一致。"
+                )
+            if resp.status_code == 404:
+                raise ServiceError(f"服务端接口不存在: {path}。请升级服务端到最新版本。")
             raise ServiceError(str(msg or f"HTTP {resp.status_code}"))
         if not isinstance(data, dict):
             raise ServiceError("服务返回格式错误")

@@ -11,9 +11,13 @@ except Exception:  # pragma: no cover
     from astrbot.api.message_components import File, Image, Video  # type: ignore
 
 from .models import OutputFile
+from .config import PluginConfig
 
 
 class Sender:
+    def __init__(self, config: PluginConfig | None = None):
+        self.cfg = config
+
     @staticmethod
     def _humanize_send_error(exc: Exception) -> str:
         raw = str(exc)
@@ -25,16 +29,33 @@ class Sender:
         return f"发送失败: {raw}"
 
     async def _check_file(self, event: AstrMessageEvent, path: str, kind: str) -> Path | None:
-        p = Path(path)
-        try:
-            rp = p.resolve(strict=True)
-        except Exception:
-            await self.send_plain(event, f"{kind}不存在: {path}")
-            return None
-        if not rp.is_file():
-            await self.send_plain(event, f"{kind}不是有效文件: {path}")
-            return None
-        return rp
+        raw = str(path or "").strip()
+        mapped = self.cfg.remap_path(raw) if self.cfg else raw
+        candidates: list[str] = [mapped]
+        if raw and mapped != raw:
+            candidates.append(raw)
+
+        for candidate in candidates:
+            if not candidate:
+                continue
+            p = Path(candidate)
+            try:
+                rp = p.resolve(strict=True)
+            except Exception:
+                continue
+            if rp.is_file():
+                if candidate != raw:
+                    logger.info(f"{kind}路径映射: {raw} -> {candidate}")
+                return rp
+
+        if raw and mapped != raw:
+            await self.send_plain(
+                event,
+                f"{kind}不存在: {mapped}\n原始路径: {raw}\n请检查 path_map 和容器挂载路径。",
+            )
+        else:
+            await self.send_plain(event, f"{kind}不存在: {raw}")
+        return None
 
     async def send_plain(self, event: AstrMessageEvent, text: str) -> None:
         await event.send(event.plain_result(text))

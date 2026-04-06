@@ -67,6 +67,12 @@
         "type": "string",
         "default": ""
     },
+    "path_map": {
+        "description": "路径映射",
+        "hint": "服务端路径=>插件可见路径；多条用 ; 或换行分隔。例: /srv/amdl/downloads=>/mnt/amdl/downloads",
+        "type": "string",
+        "default": ""
+    },
     "default_storefront": {
         "description": "默认区服",
         "hint": "如 us、jp、cn",

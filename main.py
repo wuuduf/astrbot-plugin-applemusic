@@ -35,7 +35,7 @@ class AppleMusicPlugin(Star):
         self.service = AppleMusicService(self.client, self.cfg)
         self.sessions = SessionStore(self.cfg)
         self.renderer = Renderer()
-        self.sender = Sender()
+        self.sender = Sender(self.cfg)
         self._tasks: set[asyncio.Task] = set()
 
     async def initialize(self):
@@ -92,6 +92,8 @@ class AppleMusicPlugin(Star):
                     await self._handle_url_target(event, url)
                 else:
                     await self.sender.send_plain(event, self.renderer.help_text())
+        except ServiceError as exc:
+            await self.sender.send_plain(event, str(exc))
         except Exception:
             logger.error(traceback.format_exc())
             await self.sender.send_plain(event, "命令处理失败，请稍后再试。")
@@ -116,6 +118,8 @@ class AppleMusicPlugin(Star):
         try:
             await self._handle_url_target(event, url)
             event.stop_event()
+        except ServiceError as exc:
+            await self.sender.send_plain(event, str(exc))
         except Exception:
             logger.error(traceback.format_exc())
             await self.sender.send_plain(event, "链接解析失败，请确认链接可访问。")
@@ -426,6 +430,11 @@ class AppleMusicPlugin(Star):
                 if ok_item:
                     sent += 1
 
+        if sent == 0:
+            await self.sender.send_plain(
+                event,
+                "任务已完成但未发送成功。请检查文件路径映射(path_map)、挂载目录可见性和读取权限(EACCES/ENOENT)。",
+            )
         await self.sender.send_plain(event, self.renderer.render_job_done(job_id, sent))
 
     async def _send_artwork(self, event: AstrMessageEvent, target: dict[str, Any], animated: bool):
