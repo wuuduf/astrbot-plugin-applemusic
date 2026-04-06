@@ -1,0 +1,70 @@
+{
+    "service_base_url": {
+        "description": "服务地址",
+        "hint": "apple-music-downloader-bot 的 AstrBot API 地址，例如 http://127.0.0.1:27198",
+        "type": "string",
+        "default": "http://127.0.0.1:27198"
+    },
+    "search_limit": {
+        "description": "搜索返回数量",
+        "hint": "每次搜索展示的条目数",
+        "type": "int",
+        "slider": {
+            "min": 1,
+            "max": 20,
+            "step": 1
+        },
+        "default": 8
+    },
+    "selection_timeout": {
+        "description": "多轮会话超时(秒)",
+        "hint": "选歌/二级选择等待时间，超时会自动清理",
+        "type": "int",
+        "slider": {
+            "min": 30,
+            "max": 300,
+            "step": 10
+        },
+        "default": 90
+    },
+    "auto_parse_url": {
+        "description": "自动识别链接",
+        "hint": "开启后会自动识别 Apple Music 链接并执行",
+        "type": "bool",
+        "default": true
+    },
+    "default_transfer_mode": {
+        "description": "默认传输模式",
+        "hint": "专辑/歌单/电台默认发送方式",
+        "type": "string",
+        "options": [
+            "one(逐个)",
+            "zip(压缩包)"
+        ],
+        "default": "one(逐个)"
+    },
+    "temp_dir": {
+        "description": "临时目录",
+        "hint": "留空时使用 AstrBot 插件 data 目录下的 temp",
+        "type": "string",
+        "default": ""
+    },
+    "clean_cache_on_reload": {
+        "description": "重载时清理临时目录",
+        "hint": "仅清理插件临时目录，不会清理下载器主目录",
+        "type": "bool",
+        "default": false
+    },
+    "proxy": {
+        "description": "HTTP 代理",
+        "hint": "例如 http://127.0.0.1:7890，留空表示直连",
+        "type": "string",
+        "default": ""
+    },
+    "default_storefront": {
+        "description": "默认区服",
+        "hint": "如 us、jp、cn",
+        "type": "string",
+        "default": "us"
+    }
+}
