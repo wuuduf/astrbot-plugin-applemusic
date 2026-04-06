@@ -51,6 +51,40 @@ AstrBot Apple Music 插件（QQ NapCat / OneBot / aiocqhttp 优先）。
 - `专辑`
 - `mv`
 
+## `am 设置` 详解
+
+`am 设置`
+
+- 查看当前会话下载设置（音质、AAC 模式、MV 音轨、歌词格式、自动附带项、传输模式）。
+
+`am 设置 <值> [值2 ...]`
+
+- 修改当前会话设置，支持一次传多个值（空格分隔）。
+
+可用值：
+
+- 音质：`alac` / `flac` / `aac` / `atmos`
+- AAC 模式：`aac` / `aac-lc` / `aac-binaural` / `aac-downmix`
+- MV 音轨：`mv-atmos` / `mv-ac3` / `mv-aac`（或直接 `atmos` / `ac3` / `aac`）
+- 歌词格式：`lrc` / `ttml`
+- 传输模式：`zip` / `逐个`（`one`）
+- 自动附带开关：`歌词开` / `歌词关` / `封面开` / `封面关` / `动态封面开` / `动态封面关`
+
+示例：
+
+- `am 设置 zip`
+- `am 设置 逐个`
+- `am 设置 flac`
+- `am 设置 aac-lc`
+- `am 设置 mv-ac3`
+- `am 设置 lrc`
+- `am 设置 歌词关 封面开 动态封面关`
+
+说明：
+
+- 设置是会话级生效（私聊与群聊互不影响，按 `unified_msg_origin`）。
+- 当前版本中，`song` / `album` / `playlist` / `station` 都会应用 `zip` / `one` 传输模式。
+
 ## 安装
 
 ### 方式 1：AstrBot 从仓库安装
