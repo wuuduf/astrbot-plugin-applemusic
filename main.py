@@ -75,6 +75,8 @@ class AppleMusicPlugin(Star):
                 await self._handle_search(event, "album", arg)
             elif cmd in {"搜人", "艺人", "artist", "search_artist"}:
                 await self._handle_search(event, "artist", arg)
+            elif cmd in {"help", "帮助", "h", "?"}:
+                await self.sender.send_plain(event, self.renderer.help_text())
             elif cmd in {"链接", "url"}:
                 await self._handle_link(event, arg)
             elif cmd in {"歌词", "lyrics", "lyric"}:

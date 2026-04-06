@@ -33,6 +33,7 @@ AstrBot Apple Music 插件（QQ NapCat / OneBot / aiocqhttp 优先）。
 
 ## 命令
 
+- `am help`（或 `am 帮助`）：查看命令列表和说明
 - `am 搜歌 <关键词>`
 - `am 搜专 <关键词>`
 - `am 搜人 <关键词>`

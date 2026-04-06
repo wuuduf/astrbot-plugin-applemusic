@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-04-06
+
+### Added
+- New command alias for help: `am help` / `am 帮助`.
+
+### Changed
+- Help output now includes command list with short descriptions and usage hints.
+
 ## [0.1.4] - 2026-04-06
 
 ### Changed

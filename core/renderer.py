@@ -17,15 +17,17 @@ class Renderer:
     @staticmethod
     def help_text() -> str:
         return (
-            "Apple Music 命令:\n"
-            "- am 搜歌 <关键词>\n"
-            "- am 搜专 <关键词>\n"
-            "- am 搜人 <关键词>\n"
-            "- am 链接 <apple music url>\n"
-            "- am 歌词 <song-url|song-id|album-url|album-id>\n"
-            "- am 封面 <url|type id>\n"
-            "- am 动态封面 <url|type id>\n"
-            "- am 设置 <值>\n\n"
+            "Apple Music 命令列表:\n"
+            "- am help: 查看本帮助\n"
+            "- am 搜歌 <关键词>: 搜索歌曲并可序号选择\n"
+            "- am 搜专 <关键词>: 搜索专辑并可序号选择\n"
+            "- am 搜人 <关键词>: 搜索艺人并进入专辑/MV二级选择\n"
+            "- am 链接 <apple music url>: 解析链接并下载\n"
+            "- am 歌词 <song-url|song-id|album-url|album-id>: 导出歌词\n"
+            "- am 封面 <url|type id>: 导出封面\n"
+            "- am 动态封面 <url|type id>: 导出动态封面\n"
+            "- am 设置: 查看当前会话设置\n"
+            "- am 设置 <值>: 修改会话设置（如 zip / flac / 歌词关）\n\n"
             "搜索后可回复: 1 / 1 zip / 1 歌词 / 1 封面 / 专辑 / mv"
         )
 
