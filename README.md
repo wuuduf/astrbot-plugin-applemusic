@@ -51,6 +51,8 @@ Default example:
 
 - `http://127.0.0.1:27198`
 
+If service auth is enabled (`ASTRBOT_API_TOKEN`), set plugin config `service_token` to the same value.
+
 ## Files
 
 - `main.py`: plugin class and handlers

@@ -17,7 +17,10 @@ class PluginConfig:
         self._raw = config
         self.context = context
 
-        self.service_base_url = self._get_str("service_base_url", "http://127.0.0.1:27198")
+        self.service_base_url = self._normalize_service_base_url(
+            self._get_str("service_base_url", "http://127.0.0.1:27198")
+        )
+        self.service_token = self._get_str("service_token", "").strip()
         self.search_limit = self._get_int("search_limit", 8)
         self.selection_timeout = self._get_int("selection_timeout", 90)
         self.auto_parse_url = self._get_bool("auto_parse_url", True)
@@ -95,3 +98,10 @@ class PluginConfig:
         if "zip" in text:
             return "zip"
         return "one"
+
+    @staticmethod
+    def _normalize_service_base_url(raw: str) -> str:
+        text = (raw or "").strip()
+        if text.startswith(("http://", "https://")):
+            return text.rstrip("/")
+        return "http://127.0.0.1:27198"

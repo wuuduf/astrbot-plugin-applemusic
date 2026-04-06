@@ -49,8 +49,11 @@ class AppleMusicPlugin(Star):
             logger.warning(f"Apple Music service health check failed: {exc}")
 
     async def terminate(self):
-        for task in list(self._tasks):
+        tasks = list(self._tasks)
+        for task in tasks:
             task.cancel()
+        if tasks:
+            await asyncio.gather(*tasks, return_exceptions=True)
         self._tasks.clear()
         await self.sessions.close()
         await self.client.close()

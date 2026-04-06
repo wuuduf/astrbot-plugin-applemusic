@@ -21,10 +21,14 @@ class AppleMusicClient:
         async with self._lock:
             if self._client:
                 return
+            headers: dict[str, str] = {}
+            if self.cfg.service_token:
+                headers["Authorization"] = f"Bearer {self.cfg.service_token}"
             self._client = httpx.AsyncClient(
-                base_url=self.cfg.service_base_url.rstrip("/"),
+                base_url=self.cfg.service_base_url,
                 timeout=httpx.Timeout(30.0, connect=10.0),
                 proxy=self.cfg.http_proxy,
+                headers=headers,
             )
 
     async def close(self) -> None:

@@ -5,6 +5,12 @@
         "type": "string",
         "default": "http://127.0.0.1:27198"
     },
+    "service_token": {
+        "description": "服务鉴权令牌",
+        "hint": "可选。若服务端设置了 ASTRBOT_API_TOKEN，这里填写同一个 token",
+        "type": "string",
+        "default": ""
+    },
     "search_limit": {
         "description": "搜索返回数量",
         "hint": "每次搜索展示的条目数",

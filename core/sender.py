@@ -14,6 +14,18 @@ from .models import OutputFile
 
 
 class Sender:
+    async def _check_file(self, event: AstrMessageEvent, path: str, kind: str) -> Path | None:
+        p = Path(path)
+        try:
+            rp = p.resolve(strict=True)
+        except Exception:
+            await self.send_plain(event, f"{kind}不存在: {path}")
+            return None
+        if not rp.is_file():
+            await self.send_plain(event, f"{kind}不是有效文件: {path}")
+            return None
+        return rp
+
     async def send_plain(self, event: AstrMessageEvent, text: str) -> None:
         await event.send(event.plain_result(text))
 
@@ -24,9 +36,8 @@ class Sender:
         name: str | None = None,
         caption: str | None = None,
     ) -> bool:
-        p = Path(path)
-        if not p.exists():
-            await self.send_plain(event, f"文件不存在: {path}")
+        p = await self._check_file(event, path, "文件")
+        if p is None:
             return False
         if caption:
             await self.send_plain(event, caption)
@@ -41,9 +52,8 @@ class Sender:
         path: str,
         caption: str | None = None,
     ) -> bool:
-        p = Path(path)
-        if not p.exists():
-            await self.send_plain(event, f"图片不存在: {path}")
+        p = await self._check_file(event, path, "图片")
+        if p is None:
             return False
         if caption:
             await self.send_plain(event, caption)
@@ -64,9 +74,8 @@ class Sender:
         path: str,
         caption: str | None = None,
     ) -> bool:
-        p = Path(path)
-        if not p.exists():
-            await self.send_plain(event, f"视频不存在: {path}")
+        p = await self._check_file(event, path, "视频")
+        if p is None:
             return False
         if caption:
             await self.send_plain(event, caption)
