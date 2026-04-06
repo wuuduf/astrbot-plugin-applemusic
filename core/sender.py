@@ -14,6 +14,16 @@ from .models import OutputFile
 
 
 class Sender:
+    @staticmethod
+    def _humanize_send_error(exc: Exception) -> str:
+        raw = str(exc)
+        lower = raw.lower()
+        if "eacces" in lower or "permission denied" in lower:
+            return "发送失败：平台进程无权读取该文件，请检查共享目录权限。"
+        if "enoent" in lower or "no such file" in lower:
+            return "发送失败：平台进程找不到该文件，请检查宿主机/容器路径映射。"
+        return f"发送失败: {raw}"
+
     async def _check_file(self, event: AstrMessageEvent, path: str, kind: str) -> Path | None:
         p = Path(path)
         try:
@@ -43,8 +53,13 @@ class Sender:
             await self.send_plain(event, caption)
         file_name = name or p.name
         seg = File(file=str(p), name=file_name)
-        await event.send(event.chain_result([seg]))
-        return True
+        try:
+            await event.send(event.chain_result([seg]))
+            return True
+        except Exception as exc:
+            logger.warning(f"文件发送失败: {exc}")
+            await self.send_plain(event, self._humanize_send_error(exc))
+            return False
 
     async def send_image(
         self,

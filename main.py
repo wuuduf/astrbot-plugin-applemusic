@@ -399,17 +399,31 @@ class AppleMusicPlugin(Star):
         sent = 0
         zip_file = status.result.zip_file
         if prefer_zip and zip_file:
-            ok = await self.sender.send_file(event, zip_file.path, zip_file.name)
+            try:
+                ok = await self.sender.send_file(event, zip_file.path, zip_file.name)
+            except Exception:
+                logger.error(traceback.format_exc())
+                ok = False
             if ok:
                 sent += 1
             else:
                 # ZIP 发送失败时回退逐个发送
                 for item in status.result.files:
-                    if await self.sender.send_output_file(event, item):
+                    try:
+                        ok_item = await self.sender.send_output_file(event, item)
+                    except Exception:
+                        logger.error(traceback.format_exc())
+                        ok_item = False
+                    if ok_item:
                         sent += 1
         else:
             for item in status.result.files:
-                if await self.sender.send_output_file(event, item):
+                try:
+                    ok_item = await self.sender.send_output_file(event, item)
+                except Exception:
+                    logger.error(traceback.format_exc())
+                    ok_item = False
+                if ok_item:
                     sent += 1
 
         await self.sender.send_plain(event, self.renderer.render_job_done(job_id, sent))
@@ -520,4 +534,17 @@ class AppleMusicPlugin(Star):
     def _spawn_task(self, coro):
         task = asyncio.create_task(coro)
         self._tasks.add(task)
-        task.add_done_callback(self._tasks.discard)
+        
+        def _on_done(done: asyncio.Task):
+            self._tasks.discard(done)
+            if done.cancelled():
+                return
+            try:
+                exc = done.exception()
+            except Exception:
+                logger.error(traceback.format_exc())
+                return
+            if exc:
+                logger.error(f"后台任务异常: {exc}")
+
+        task.add_done_callback(_on_done)
