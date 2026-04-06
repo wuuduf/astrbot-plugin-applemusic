@@ -5,6 +5,16 @@ from .models import SearchItem, SessionSettings
 
 class Renderer:
     @staticmethod
+    def _format_elapsed(seconds: int) -> str:
+        if seconds < 60:
+            return f"{seconds}s"
+        m, s = divmod(seconds, 60)
+        if m < 60:
+            return f"{m}m{s:02d}s"
+        h, m = divmod(m, 60)
+        return f"{h}h{m:02d}m{s:02d}s"
+
+    @staticmethod
     def help_text() -> str:
         return (
             "Apple Music 命令:\n"
@@ -62,6 +72,11 @@ class Renderer:
     @staticmethod
     def render_job_queued(job_id: str) -> str:
         return f"下载任务已创建，job_id={job_id}，完成后将主动推送。"
+
+    def render_job_progress(self, job_id: str, status: str, elapsed_sec: int) -> str:
+        status_text = status or "running"
+        elapsed = self._format_elapsed(max(0, int(elapsed_sec)))
+        return f"任务进行中 (job_id={job_id})，状态={status_text}，已耗时 {elapsed}。"
 
     @staticmethod
     def render_job_failed(job_id: str, reason: str) -> str:

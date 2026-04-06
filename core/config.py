@@ -28,6 +28,8 @@ class PluginConfig:
         self.default_transfer_mode = self._normalize_transfer_mode(
             self._get_str("default_transfer_mode", "one(逐个)")
         )
+        self.job_progress_notify = self._get_bool("job_progress_notify", True)
+        self.job_progress_interval = max(5, self._get_int("job_progress_interval", 20))
         self.clean_cache_on_reload = self._get_bool("clean_cache_on_reload", False)
         self.proxy = self._get_str("proxy", "")
         self.default_storefront = self._get_str("default_storefront", "us").lower().strip() or "us"

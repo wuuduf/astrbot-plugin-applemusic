@@ -386,8 +386,24 @@ class AppleMusicPlugin(Star):
         self._spawn_task(self._watch_download_job(event, job_id, prefer_zip=(transfer_mode == "zip")))
 
     async def _watch_download_job(self, event: AstrMessageEvent, job_id: str, prefer_zip: bool):
+        start_ts = time.monotonic()
+        next_notify_ts = start_ts + float(self.cfg.job_progress_interval)
         try:
-            status = await self.service.wait_job(job_id, poll_interval=2.0)
+            while True:
+                status = await self.service.get_job(job_id)
+                current = (status.status or "").strip().lower()
+                if current in {"completed", "failed"}:
+                    break
+
+                if self.cfg.job_progress_notify and time.monotonic() >= next_notify_ts:
+                    elapsed = int(time.monotonic() - start_ts)
+                    await self.sender.send_plain(
+                        event,
+                        self.renderer.render_job_progress(job_id, current or "running", elapsed),
+                    )
+                    next_notify_ts = time.monotonic() + float(self.cfg.job_progress_interval)
+
+                await asyncio.sleep(2.0)
         except Exception as exc:
             await self.sender.send_plain(event, self.renderer.render_job_failed(job_id, str(exc)))
             return

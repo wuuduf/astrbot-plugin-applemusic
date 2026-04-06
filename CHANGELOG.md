@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-04-06
+
+### Added
+- Job progress notifications during download execution (`queued` / `running`) with elapsed time display.
+- New plugin configs:
+  - `job_progress_notify` (enable/disable periodic progress reminders)
+  - `job_progress_interval` (progress reminder interval in seconds)
+
+### Changed
+- Download job watcher now polls status and pushes periodic in-chat progress updates before completion.
+
 ## [0.1.2] - 2026-04-06
 
 ### Added

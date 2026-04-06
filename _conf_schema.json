@@ -49,6 +49,23 @@
         ],
         "default": "one(逐个)"
     },
+    "job_progress_notify": {
+        "description": "任务进度提醒",
+        "hint": "下载任务执行期间定时发送进行中状态(queued/running)",
+        "type": "bool",
+        "default": true
+    },
+    "job_progress_interval": {
+        "description": "进度提醒间隔(秒)",
+        "hint": "最小5秒，建议15~30秒，避免消息过多",
+        "type": "int",
+        "slider": {
+            "min": 5,
+            "max": 120,
+            "step": 5
+        },
+        "default": 20
+    },
     "temp_dir": {
         "description": "临时目录",
         "hint": "留空时使用 AstrBot 插件 data 目录下的 temp",
