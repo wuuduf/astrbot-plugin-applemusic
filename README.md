@@ -126,3 +126,5 @@ git pull
 ```
 
 然后在 AstrBot WebUI 重载插件即可。
+
+变更日志见 [`CHANGELOG.md`](./CHANGELOG.md)。
