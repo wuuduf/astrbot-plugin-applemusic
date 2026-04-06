@@ -76,7 +76,7 @@ pip install -r requirements.txt
 - `service_base_url`：服务端地址，例如 `http://127.0.0.1:27198`
 - `service_token`：若服务端设置了 `ASTRBOT_API_TOKEN`，这里填同一 token
 - `selection_timeout`：选歌超时秒数
-- `default_transfer_mode`：专辑/歌单默认发送方式（逐个/zip）
+- `default_transfer_mode`：song/专辑/歌单默认发送方式（逐个/zip）
 - `job_progress_notify`：任务执行中是否定时提醒（默认开启）
 - `job_progress_interval`：进度提醒间隔秒数（默认 20 秒）
 - `path_map`：路径映射（解决服务端路径与容器内路径不一致）

@@ -254,7 +254,7 @@ class AppleMusicPlugin(Star):
         transfer_mode = "one"
         if op == "zip":
             transfer_mode = "zip"
-        elif media_type in {"album", "playlist", "station"}:
+        elif media_type in {"song", "album", "playlist", "station"}:
             transfer_mode = self.sessions.get_settings(session_key).transfer_mode
 
         await self._queue_download(event, target, transfer_mode=transfer_mode)
@@ -325,7 +325,7 @@ class AppleMusicPlugin(Star):
 
         session_key = self._session_key(event)
         transfer_mode = "one"
-        if media_type in {"album", "playlist", "station"}:
+        if media_type in {"song", "album", "playlist", "station"}:
             transfer_mode = self.sessions.get_settings(session_key).transfer_mode
         await self._queue_download(event, target, transfer_mode=transfer_mode)
 

@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-04-06
+
+### Changed
+- NapCat/AstrBot flow now applies session transfer mode to `song` targets as well.
+- Direct Apple Music song URLs now follow session `zip/one` preference instead of always forcing one-by-one.
+
 ## [0.1.3] - 2026-04-06
 
 ### Added

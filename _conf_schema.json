@@ -41,7 +41,7 @@
     },
     "default_transfer_mode": {
         "description": "默认传输模式",
-        "hint": "专辑/歌单/电台默认发送方式",
+        "hint": "song/专辑/歌单/电台默认发送方式",
         "type": "string",
         "options": [
             "one(逐个)",
