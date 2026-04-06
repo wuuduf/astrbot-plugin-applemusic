@@ -41,7 +41,12 @@ class AppleMusicService:
         target = payload.get("target")
         if not isinstance(target, dict):
             raise ServiceError("服务未返回可用目标")
-        return target
+        normalized = self._normalize_target(target)
+        if not normalized.get("media_type"):
+            raise ServiceError("服务未返回 media_type")
+        if not normalized.get("id"):
+            raise ServiceError("服务未返回 id")
+        return normalized
 
     async def artist_children(
         self,
@@ -137,3 +142,32 @@ class AppleMusicService:
             "transfer_mode": transfer_mode,
         }
         return await self.client.lyrics(payload)
+
+    @staticmethod
+    def _normalize_target(target: dict[str, Any]) -> dict[str, Any]:
+        def pick(*keys: str) -> str:
+            for key in keys:
+                val = target.get(key)
+                if val is None:
+                    continue
+                text = str(val).strip()
+                if text:
+                    return text
+            return ""
+
+        media_type = pick("media_type", "MediaType", "mediaType", "type")
+        media_id = pick("id", "ID", "media_id", "MediaID")
+        storefront = pick("storefront", "Storefront")
+        raw_url = pick("raw_url", "rawUrl", "RawURL")
+        url = pick("url", "URL")
+        if not raw_url:
+            raw_url = url
+        if not url:
+            url = raw_url
+        return {
+            "media_type": media_type,
+            "id": media_id,
+            "storefront": storefront or "us",
+            "raw_url": raw_url,
+            "url": url,
+        }
