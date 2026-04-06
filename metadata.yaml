@@ -4,4 +4,4 @@ desc: 接入 apple-music-downloader-bot，支持 Apple Music 搜索、下载、�
 help: 发送 /am 查看命令帮助
 version: v0.1.0
 author: jelly
-repo: local
+repo: https://github.com/wuuduf/astrbot-plugin-applemusic
